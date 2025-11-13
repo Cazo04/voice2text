@@ -83,7 +83,7 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
     {
         Serial.printf("[WSc] Received text");
 
-        StaticJsonDocument doc;
+        JsonDocument doc;
         DeserializationError error = deserializeJson(doc, payload, length);
 
         if (error)
