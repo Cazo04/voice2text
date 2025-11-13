@@ -80,6 +80,7 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
         Serial.printf("[WSc] Connected to url: %s\n", payload);
         break;
     case WStype_TEXT:
+    {
         Serial.printf("[WSc] Received text");
 
         StaticJsonDocument doc;
@@ -109,6 +110,7 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
         }
 
         break;
+    }
     case WStype_BIN:
         // No binary data expected
         break;
