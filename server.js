@@ -136,7 +136,8 @@ wssUI.on('connection', (ws, req) => {
             .join(" ");
           console.log(`Turn ${turn_order}: ${transcript}`);
           sendToUI(ui, { type: 'transcript', text: orderedTurns });
-          broadcastToESP(esp, { text: orderedTurns });
+            const latest64 = Array.from(orderedTurns).slice(-64).join('');
+            broadcastToESP(esp, { text: latest64 });
         } else if (payload.type === "Begin") {
           console.log(`AAI streaming begun`);
           sendToUI(ui, { type: 'start' });
