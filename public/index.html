@@ -412,7 +412,7 @@
         // Connect to WebSocket
         function connect() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsUrl = `${protocol}//${window.location.host}/ws`;
+            const wsUrl = `${protocol}//${window.location.host}/wsui`;
             
             console.log('Connecting to:', wsUrl);
             ws = new WebSocket(wsUrl);
