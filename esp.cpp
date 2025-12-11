@@ -151,6 +151,53 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
   }
 }
 
+void displayTextWrapped(String text, int x, int y) {
+  u8g2.clearBuffer();
+  
+  int displayWidth = u8g2.getDisplayWidth();
+  int lineHeight = u8g2.getMaxCharHeight();
+  int currentY = y;
+  int currentX = x;
+  int maxY = u8g2.getDisplayHeight();
+  
+  String word = "";
+  int wordWidth = 0;
+  
+  for (unsigned int i = 0; i <= text.length(); i++) {
+    char c = (i < text.length()) ? text.charAt(i) : ' ';
+    
+    if (c == ' ' || c == '\n' || i == text.length()) {
+      if (word.length() > 0) {
+        wordWidth = u8g2.getStrWidth(word.c_str());
+        
+        if (currentX + wordWidth > displayWidth) {
+          currentY += lineHeight;
+          currentX = x;
+          
+          if (currentY > maxY) break;
+        }
+        
+        u8g2.setCursor(currentX, currentY);
+        u8g2.print(word);
+        currentX += wordWidth + u8g2.getStrWidth(" ");
+        
+        word = "";
+      }
+      
+      if (c == '\n') {
+        currentY += lineHeight;
+        currentX = x;
+        if (currentY > maxY) break;
+      }
+    } else {
+      word += c;
+    }
+  }
+  
+  u8g2.sendBuffer();
+}
+
+
 void setup()
 {
   Serial.begin(115200);
@@ -190,7 +237,7 @@ void setup()
   oledNeedsUpdate = true;
 
   // Initialize WebSocket client with reconnect interval for robustness
-  webSocket.begin(ws_host, ws_port, ws_path);
+  webSocket.beginSSL(ws_host, ws_port, ws_path);
   webSocket.onEvent(webSocketEvent);
   webSocket.setReconnectInterval(5000);
 }
@@ -252,10 +299,7 @@ void loop()
   // Update OLED display only when content changes to reduce flicker
   if (oledNeedsUpdate)
   {
-    u8g2.clearBuffer();
-    u8g2.setCursor(0, 15);
-    u8g2.print(oledText);
-    u8g2.sendBuffer();
+    displayTextWrapped(oledText, 0, 15);
     oledNeedsUpdate = false;
   }
 }
